@@ -5,10 +5,10 @@ date: "10/6/2020"
 output: html_document
 ---
 
+Installing the needed packages and creating a 
 ```{r}
 install.packages("tidytuesdayR")
 library(tidytuesdayR)
 hotels <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-02-11/hotels.csv')
+hotels
 ```
-
-dfs
