@@ -1,0 +1,35 @@
+---
+title: "R project"
+author: "Si Chen"
+date: "10/8/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+install.packages("tidytuesdayR")
+```
+```{r}
+tuesdata <- tidytuesdayR::tt_load('2020-02-11')
+tuesdata <- tidytuesdayR::tt_load(2020, week = 7)
+hotels <- tuesdata$hotels
+```
+```{r}
+library(dplyr)
+room_reservation_preference<-
+  hotels%>% count(reserved_room_type)
+room_reservation_preference
+```
+
+```{r}
+library(ggplot2)
+room_type<- as_tibble(room_reservation_preference)
+plot1<-ggplot(room_type,mapping=aes(x=room_type$reserved_room_type, y=room_type$n))+
+      geom_bar(stat = "identity")
+plot1
+```
+
+
