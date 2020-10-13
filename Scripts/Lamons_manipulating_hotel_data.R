@@ -89,6 +89,7 @@ lm.nkids <- lm(adr_by_party$adr ~ adr_by_party$Number_of_Kids_per_Party)
 summary(lm.party_size)
 summary(lm.nkids)
 
+
 #Writing the means into a txt files
 means_adr_by_party <- as.data.frame(lapply(adr_by_party, mean), row.names = "mean")
 
