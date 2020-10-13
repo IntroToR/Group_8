@@ -20,9 +20,6 @@ adr_by_party <- hotels %>%
   
 # I also removed adr = 0 because those are useless to my analysis
 
-
-boxplot.stats(adr_by_party$adr)$out #shows that values of 211.08 over are outlier
-boxplot.stats(adr_by_party$party_size)$out
 summary(adr_by_party$party_size)
 
 ggplot(hotels) +
@@ -46,7 +43,7 @@ hotels %>%
 
 # creating a nice graph to correlate age of customer with adr
 
-ggplot(adr_by_party) +
+(npeople_v_adr_plot <- ggplot(adr_by_party) +
   aes(x = party_size, y = adr, colour = Number_of_Kids_per_Party) +
   geom_tile() +
   scale_color_distiller(palette = "Paired") +
@@ -61,11 +58,11 @@ ggplot(adr_by_party) +
   annotate(geom = "segment", x = 2, y = 150, xend = 2.5, yend = 130, size = 1, colour = "black", arrow = arrow(length = unit(2, "mm"))) +
   annotate(geom = "text", x = 0.52, y = 182, label = "Linear Regression Line", hjust = "left", colour = "black") +
   annotate(geom = "text", x = 0.52, y = 167, label = "(yint = 41.13, slope = 31.60, p < 2.2e-16,", hjust = "left", colour = "black") +
-  annotate(geom = "text", x = 0.52, y = 152, label = "paste(italic(R) ^ 2, \"= 0.1.911)\")", parse = TRUE, hjust = "left", colour = "black")
+  annotate(geom = "text", x = 0.52, y = 152, label = "paste(italic(R) ^ 2, \"= 0.1911)\")", parse = TRUE, hjust = "left", colour = "black"))
 
 
 
-ggplot(adr_by_party) +
+(nkids_v_adr <- ggplot(adr_by_party) +
   aes(x = Number_of_Kids_per_Party , y = adr, colour = Number_of_Kids_per_Party) +
   geom_tile(show.legend = FALSE) +
   scale_color_distiller(palette = "Paired") +
@@ -78,7 +75,8 @@ ggplot(adr_by_party) +
         title = element_text(size = 20)) +
   annotate(geom = "segment", x = 0.5, y = 200, xend = 1, yend = 150, size = 1, colour = "black", arrow = arrow(length = unit(2, "mm"))) +
   annotate(geom = "text", x = -.4, y = 230, label = "Linear Regression Line", hjust = "left", colour = "black") +
-  annotate(geom = "text", x = -.4, y = 215, label = "(yint = 98.99, slope = 39.99, p < 2.2e-16, paste(italic(R) ^ 2, \"= 0.1.239)\")", parse = TRUE, hjust = "left", colour = "black")
+  annotate(geom = "text", x = -.4, y = 215, label = "(yint = 98.99, slope = 39.99, p < 2.2e-16,", hjust = "left", colour = "black") +
+  annotate(geom = "text", x = 0.9, y = 215, label = "paste(italic(R) ^ 2, \" = 0.1293)\")", parse = TRUE, hjust = "left", colour = "black"))
 
 
 # Finding the linear model for both graphs
