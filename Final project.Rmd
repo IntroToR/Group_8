@@ -1,10 +1,133 @@
 ---
-title: "Empty R markdown"
-author: "Si Chen"
+title: "Group 8: Hotel Bookings"
+author: "Alex Armstrong, Si Chen, Ethan Lamons"
 date: "10/13/2020"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+Loading all of the packages needed.
+```{r}
+library(tidytuesdayR)
+library(tidyverse)
+library(outliers)
+library(ggdark)
 ```
+
+
+# Part 1: Analysis Between adr and Booking Party Composition
+
+There are two comparisons done in this section. One is between adr and the full
+party composition with the colors showing the breakdown of the party by age group.
+The other is between adr and the number of kids. A linear regression analysis is 
+shown at the end, and the resulting line 
+
+## 1.1 Bringing in and modifying the dataset
+
+First thing is to bring in the Hotel Bookings data from the Tidy Tuesday repository.
+```{r}
+hotels <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-02-11/hotels.csv')
+hotels
+```
+
+Next thing is to modify the dataset to choose only the needed variables for the graphs and analysis. I also removed outliers and added in two new variables, "Number_of_Kids_per_Party" and "party_size". The way I determined the outliers is shown below. I also removed any adr and party_size values that equaled zero since that data is irrelevant to my analysis. 
+```{r}
+adr_by_party <- hotels %>%
+  select(adults, children, babies, adr) %>%
+  mutate(party_size = (adults + children + babies)) %>%
+  mutate(Number_of_Kids_per_Party = (children + babies)) %>%
+  arrange(party_size) %>%
+  filter(adr < 500 & adr != 0 & party_size < 10 & party_size > 0) %>%
+  na.omit(adr_by_party)
+```
+
+Here are the summary statistics of the modified dataset and two boxplots which show that adr values over 500 are outliers. The same method was applied to party_size which shows that values of party_size that are 10 or more are outliers. The black line in these boxplots show the cutoff for outliers.
+```{r}
+summary(adr_by_party)
+
+ggplot(hotels) +
+  aes(x = "", y = adr) +
+  geom_boxplot(fill = "#000000") +
+  theme_minimal() +
+  geom_hline(aes(yintercept = 500), colour = "black")
+
+hotels %>%
+  filter(adr >= -50L & adr <= 1300L) %>%
+  ggplot() +
+  aes(x = "", y = adr) +
+  geom_boxplot(fill = "#000000") +
+  theme_minimal() +
+  geom_hline(aes(yintercept = 500), colour = "black")
+```
+
+## 1.2 Making a graph showing relation between number of people per booking and adr
+
+Below is a tile graph showing the relationship between the number of people per booking and adr. The colors on the graph show the number of kids per party. The white line is the result of a linear regression analysis shown in a later section. From the graph, there is a significant correlation between party size and adr with a further correlation between adr and the number of kids per party. This result lead to the next graph. A full image .png of the graph is available under the Figures folder in the repository.
+```{r}
+(npeople_v_adr_plot <- ggplot(adr_by_party) +
+  aes(x = party_size, y = adr, colour = Number_of_Kids_per_Party) +
+  geom_tile() +
+  scale_color_distiller(palette = "Paired") +
+  labs(x = "Number of People per Booking", y = "Average Daily Rate", title = "Number of People per Booking vs ADR Related to the Number of Kids per Party", caption = "Graph made by - Ethan Lamons") +
+  dark_theme_bw() +
+  theme(axis.title.x = element_text(size = 15),
+        axis.title.y = element_text(size = 15, vjust = 2),
+        title = element_text(size = 14),
+        legend.title = element_text(size = 12)) +
+  geom_abline(aes(slope = 31.64, intercept = 41.06), size = 1.5) +
+  scale_x_continuous(n.break = 6) +
+  annotate(geom = "segment", x = 2, y = 150, xend = 2.5, yend = 130, size = 1, colour = "black", arrow = arrow(length = unit(2, "mm"))) +
+  annotate(geom = "text", x = 0.52, y = 182, label = "Linear Regression Line", hjust = "left", colour = "black") +
+  annotate(geom = "text", x = 0.52, y = 167, label = "(yint = 41.06, slope = 31.64, p < 2.2e-16,", hjust = "left", colour = "black") +
+  annotate(geom = "text", x = 0.52, y = 152, label = "paste(italic(R) ^ 2, \"= 0.191)\")", parse = TRUE, hjust = "left", colour = "black"))
+```
+
+## 1.3 Graph showing the relation between the number of kids per party and adr
+
+This graph is similar to the previous except the x axis variable is the number of kids per booking, and the colors are there to make it easier to distinguish the columns. Again, the white line is from a linear regression analysis shown below. A full size .png of the graph can be found in the Figures folder.
+```{r}
+(nkids_v_adr <- ggplot(adr_by_party) +
+  aes(x = Number_of_Kids_per_Party , y = adr, colour = Number_of_Kids_per_Party) +
+  geom_tile(show.legend = FALSE) +
+  scale_color_distiller(palette = "Paired") +
+  labs(x = "Number of Kids per Booking", y = "Average Daily Rate", title = "Number of Kids per Booking vs ADR", caption = "Graph made by - Ethan Lamons") +
+  dark_theme_bw() +
+  geom_abline(slope = 40.01, intercept = 99, size = 1.5) +
+  scale_x_continuous(n.break = 6) +
+  theme(axis.title.x = element_text(size = 15),
+        axis.title.y = element_text(size = 15, vjust = 2),
+        title = element_text(size = 20)) +
+  annotate(geom = "segment", x = 0.5, y = 200, xend = 1, yend = 150, size = 1, colour = "black", arrow = arrow(length = unit(2, "mm"))) +
+  annotate(geom = "text", x = -.4, y = 230, label = "Linear Regression Line", hjust = "left", colour = "black") +
+  annotate(geom = "text", x = -.4, y = 215, label = "(yint = 99, slope = 40.01, p < 2.2e-16,", hjust = "left", colour = "black") +
+  annotate(geom = "text", x = 0.9, y = 215, label = "paste(italic(R) ^ 2, \" = 0.124)\")", parse = TRUE, hjust = "left", colour = "black"))
+
+```
+
+## 1.4 Linear regression analysis of the data
+
+The linear regression lines found on each of the graphs come from the analysis shown below. First is making the linear regression variable for each comparison and then showing the summary of the linear regression values. Both graphs show a very high significance between the variables used which comes from the low p-value. The R-squared value is low, though, showing that the correlation is not very strong.
+```{r}
+#Corresponding to the first graph
+lm.party_size <- lm(adr_by_party$adr ~ adr_by_party$party_size)
+
+#Corresponding to the second graph
+lm.nkids <- lm(adr_by_party$adr ~ adr_by_party$Number_of_Kids_per_Party)
+```
+
+```{r}
+#Corresponding to the first graph
+summary(lm.party_size)
+
+#Corresponding to the second graph
+summary(lm.nkids)
+```
+
+## 1.5 Creating a .txt file with the means
+
+Finally, I created a text file that contains all the means of the variables I used. The file can be found in the Data folder.
+```{r}
+means_adr_by_party <- as.data.frame(lapply(adr_by_party, mean), row.names = "mean")
+
+write.table(means_adr_by_party, file = "C:/Users/lamon/Desktop/CPSC441/Group_8/Data/adr_by_party_means.txt")
+```
+
