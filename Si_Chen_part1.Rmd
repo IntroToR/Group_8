@@ -29,7 +29,8 @@ library(ggplot2)
 room_type<- as_tibble(room_reservation_preference)
 plot1<-ggplot(room_type,mapping=aes(x=room_type$reserved_room_type, y=room_type$n))+
       geom_bar(stat = "identity")+
-      labs(x="Type of room",y="Number of reservation")
+      labs(x="Type of room",y="Number of reservation")+
+      ggtitle("Room Reservation by Type")
 plot1
 ```
 
