@@ -1,1 +1,5 @@
 # Group_8
+
+For this project, we used the Hotel Bookings dataset from the Tidy Tuesday R repository. Each of us took different variables and analyzed the relationships between these variables using various statistical analysis tools and graphs. The first section by Ethan Lamons compares the average daily rate (ADR) per booking with the amount and age range of the party that booked the room. A further comparison is made between the ADR and the number of kids per booking party with a linear regression analysis made for each comparison.
+	For the second section, Si Chen provides data visualization in the room reservations by type. She also conducted two linear regression analysis in finding the relationship between nights stayed at hotels on weekdays or weekends and having children or babies.
+	For the third section, Alex Armstrong looked at the country data. Firstly with the mean average daily rate per country, then the mean lead time per country. After that, a further comparison was made between the distribution channel and the lead time. An analysis of variance was then made between the 3 main distribution channels and their lead times.  
