@@ -10,6 +10,11 @@ library(tidytuesdayR)
 library(tidyverse)
 library(outliers)
 library(ggdark)
+
+install.packages("rworldmap")
+library(rworldmap)
+install.packages("RColorBrewer")
+library(RColorBrewer)
 ```
 # Part 1: Analysis Between adr and Booking Party Composition
 
@@ -128,6 +133,7 @@ write.table(means_adr_by_party, file = "C:/Users/lamon/Desktop/CPSC441/Group_8/D
 ```
 
 
+
 # Part 2
 
 2.1
@@ -169,5 +175,128 @@ means_hotel_stays <- hotels%>%
 
 write.table(means_hotel_stays, file = "hotel_stays_means.txt")
 ```
+
+
+PART 3 - Countries / Lead Time - Alex:
+
+I was initially interested in the country by country data, which is difficult to visualize with a simple graph as there are hundreds of countries in the data-set, so I used the 'rworldmap' package. 
+The hotels data set includes the country data in the form of iso3 country codes, which allows the hotel data to be joined to the correct country on the world map. 
+Visualizing the data in map form allows us to see that the average daily rate (defined by dividing the sum of all lodging transactions by the total number of staying nights within a country) appears to be higher in the U.S. and other countries such as Kazakhstan.
+First, I had to manipulate the data by using group_by to group the data for each country. Then I took the mean of the average daily rate for each country.
+
+```{r}
+by_country <- hotels %>% 
+  group_by(country) %>% 
+  summarise(mean_adr=mean(adr))
+print(by_country)
+mapped_data <- joinCountryData2Map(by_country, 
+        joinCode = "ISO3", 
+        nameJoinColumn = "country")
+
+par(mai=c(0,0,0.2,0), xaxs = "i", yaxs = "i")
+
+mapParams <- mapCountryData(mapped_data, 
+        nameColumnToPlot = "mean_adr",
+        mapTitle = "Mean Average Daily Rate by Country",
+        addLegend=F)
+
+do.call(addMapLegend,
+        c(mapParams,
+          legendLabels='limits',
+          legendWidth=1.0,
+          legendIntervals='data'
+          ))
 ```
 
+Using the same tools, I started looking into the Lead Time data, which states how far in advance bookings are made. Once again I used the 'rworldmap' package. 
+This time I made a legend box, which shows the categories of the data much better.  
+I manually created the bounds for the legend.
+I also used a different colour scheme using the RColorBrewer package.
+
+
+```{r}
+by_country2 <- hotels %>% 
+  group_by(country) %>%
+  summarise(mean_leadtime=mean(lead_time))
+
+colourPalette2 <- brewer.pal(n=7,name='RdPu')
+
+mapped_data2 <- joinCountryData2Map(by_country2, 
+        joinCode = "ISO3", 
+        nameJoinColumn = "country")
+
+par(mai=c(0,0,0.2,0), xaxs = "i", yaxs = "i")
+
+mapParams2 <- mapCountryData(mapped_data2, 
+        nameColumnToPlot = "mean_leadtime",
+        mapTitle = "Lead Time by Country",
+        colourPalette = colourPalette2,
+        addLegend = F)
+
+mapParams2$legendText <-
+  c('0 - 22.72',
+    '22.72-42.89',
+    '42.89-57.85',
+    '57.85-77.21',
+    '77.21- 94.85',
+    '94.85-123.96',
+    '123.96+')
+
+do.call(addMapLegendBoxes,
+        c(mapParams2,
+          title='Lead Times (Days)'))
+```
+
+Further exploring the lead time variable showed there appeared to be a difference in lead time depending on the distribution method. 
+To measure this, I created a bar plot. This time it shows the average lead time within different distribution channels.
+First I grouped by distribution channel again and then caluclated the mean and standard devaitions for each distribution channel.
+
+```{r}
+by_distribution_channel<-hotels %>% 
+  group_by(distribution_channel) %>%
+  summarise(mean_dist_leadtime=mean(lead_time),
+            sd_dist_leadtime=sd(lead_time))
+
+ggplot(by_distribution_channel, aes(x=distribution_channel, y=mean_dist_leadtime)) + 
+  geom_bar(stat='identity', aes(fill=distribution_channel), col='#000000', na.rm=T) + 
+  ylim(c(0, 250)) + 
+  labs(y="Lead Time (Days) +/- SD", 
+       x="Distribution Type", 
+       title="Average Lead Time per Distribution Channel" 
+       )+
+  geom_errorbar(aes(ymin=mean_dist_leadtime,  # I left the ymin as the mean, as most of the ymin values were below zero, so I wanted to exclude them from the graph
+                    ymax=mean_dist_leadtime + sd_dist_leadtime),
+                    width=.8,
+                    position='dodge') +
+  theme(plot.title=element_text(hjust = 0.5), legend.position = 'none')
+
+```
+
+For the statistical analysis, I was keen to see whether there was any significant difference between the 3 main distribution channels shown in the graph above.
+To do this, I first isolated the 3 most popular distribution channels (direct, coporate & TA/TO).
+Then I carried out an analysis of variance across the 3 different channels.
+The results show there is significance.
+
+```{r}
+distribution_channel_analysis<-hotels %>% 
+  select(distribution_channel, lead_time) %>%
+  mutate(distribution_channel = factor(distribution_channel,
+                                       levels = c("Direct", "Corporate", "TA/TO")))
+
+# Compute the analysis of variance
+res.aov <- aov(distribution_channel_analysis$lead_time ~ distribution_channel_analysis$distribution_channel)
+# Summary of the analysis
+summary(res.aov)
+```
+
+Finally, I saved the mean variables to a file. 
+I used the 'by_country', 'by_country2' and 'by_distribution_channel' data frames from earlier, as they already list the means.
+by_country displays the mean average daily rate for each country
+by_country2 displays the mean lead_time for each country
+by_distribution_channel displays the mean lead_time for each distribution channel
+
+```{r}
+write.table(by_country, file = "C:\Users\AlexA\OneDrive\Documents\R\Group_8\Data\Alex_Means.txt")
+write.table(by_country2, file = "C:\Users\AlexA\OneDrive\Documents\R\Group_8\Data\Alex_Means.txt", append=T)
+write.table(by_distribution_channel, file = "C:\Users\AlexA\OneDrive\Documents\R\Group_8\Data\Alex_Means.txt", append=T)
+>>>>>>> 861545224ed1f38a83eeb39a680cd198bc55026a
