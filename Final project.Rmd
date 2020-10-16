@@ -4,16 +4,23 @@ author: "Alex Armstrong, Si Chen, Ethan Lamons"
 date: "10/13/2020"
 output: html_document
 ---
+# Introduction
+For this project, we used the Hotel Bookings dataset from the Tidy Tuesday R repository. Each of us took different variables and analyzed the relationships between these variables using various statistical analysis tools and graphs. The first section by Ethan Lamons compares the average daily rate (ADR) per booking with the amount and age range of the party that booked the room. A further comparison is made between the ADR and the number of kids per booking party with a linear regression analysis made for each comparison.
+	For the second section, Si Chen provides data visualization in the room reservations by type. She also conducted two linear regression analysis in finding the relationship between nights stayed at hotels on weekdays or weekends and having children or babies.
+	For the third section, Alex Armstrong looked at the country data. Firstly with the mean average daily rate per country, then the mean lead time per country. After that, a further comparison was made between the distribution channel and the lead time. An analysis of variance was then made between the 3 main distribution channels and their lead times.  
+
+
 Loading all of the packages needed.
 ```{r}
+install.packages("tidytuesdayR", repos = "http://cran.us.r-project.org")
 library(tidytuesdayR)
 library(tidyverse)
 library(outliers)
 library(ggdark)
 
-install.packages("rworldmap")
+install.packages("rworldmap", repos = "http://cran.us.r-project.org")
 library(rworldmap)
-install.packages("RColorBrewer")
+install.packages("RColorBrewer", repos = "http://cran.us.r-project.org")
 library(RColorBrewer)
 ```
 # Part 1: Analysis Between adr and Booking Party Composition
@@ -134,9 +141,9 @@ write.table(means_adr_by_party, file = "C:/Users/lamon/Desktop/CPSC441/Group_8/D
 
 
 
-#PART 2 Analysis of Room Reserved and Nights stayed
+# PART 2: Analysis of Room Reserved and Nights stayed
 
-2.1
+## 2.1
 Assigning a variable that contains the number of counts by unique room types in reserved room type and showing the counts.
 ```{r}
 library(dplyr)
@@ -144,7 +151,7 @@ room_reservation_preference<-hotels%>%
             count(reserved_room_type)
 room_reservation_preference
 ```
-2.2
+## 2.2
 Making a graph out of the value counts. From the graph, we can see that the room type A is the abusolute most reserved room type, with 85994 reservations. The type of room is not specified but I suppose room type A is the standard room.
 ```{r}
 library(ggplot2)
@@ -158,7 +165,7 @@ room_reservation_plot
 ggsave(room_reservation_plot,device="pdf")
 ```
 
-2.3
+## 2.3
 Conducting two linear regressions
 First, we want to know whether families with children or babies stay more nights on week days
 Second, we want to know whtehr families with children or babies stay more nights on weekend days
@@ -173,18 +180,21 @@ summary(lm.week_day_stays )
 summary(lm.weekend_day_stays )
 ```
 
-2.4
+## 2.4
 Saving the means of variables I used to a text file
 ```{r}
 means_hotel_stays <- hotels%>%
    select(reserved_room_type,stays_in_week_nights,stays_in_weekend_nights,children,babies)%>%
-   as.data.frame(lapply(mean), row.names = "mean")
+   na.omit(means_hotel_stays)
+
+means_hotel_stays <- as.data.frame(lapply(means_hotel_stays, mean), row.names = "mean")
+
 
 write.table(means_hotel_stays, file = "hotel_stays_means.txt")
 ```
 
 
-PART 3 - Countries / Lead Time - Alex:
+# PART 3: Countries / Lead Time - Alex:
 
 I was initially interested in the country by country data, which is difficult to visualize with a simple graph as there are hundreds of countries in the data-set, so I used the 'rworldmap' package. 
 The hotels data set includes the country data in the form of iso3 country codes, which allows the hotel data to be joined to the correct country on the world map. 
@@ -303,7 +313,7 @@ by_country2 displays the mean lead_time for each country
 by_distribution_channel displays the mean lead_time for each distribution channel
 
 ```{r}
-write.table(by_country, file = "C:\Users\AlexA\OneDrive\Documents\R\Group_8\Data\Alex_Means.txt")
-write.table(by_country2, file = "C:\Users\AlexA\OneDrive\Documents\R\Group_8\Data\Alex_Means.txt", append=T)
-write.table(by_distribution_channel, file = "C:\Users\AlexA\OneDrive\Documents\R\Group_8\Data\Alex_Means.txt", append=T)
->>>>>>> 861545224ed1f38a83eeb39a680cd198bc55026a
+#write.table(by_country, file = "C:\Users\AlexA\OneDrive\Documents\R\Group_8\Data\Alex_Means.txt")
+#write.table(by_country2, file = "C:\Users\AlexA\OneDrive\Documents\R\Group_8\Data\Alex_Means.txt", append=T)
+#write.table(by_distribution_channel, file = "C:\Users\AlexA\OneDrive\Documents\R\Group_8\Data\Alex_Means.txt", append=T)
+#>>>>>>> 861545224ed1f38a83eeb39a680cd198bc55026a
