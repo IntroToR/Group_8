@@ -134,9 +134,10 @@ write.table(means_adr_by_party, file = "C:/Users/lamon/Desktop/CPSC441/Group_8/D
 
 
 
-# Part 2
+#PART 2 Analysis of Room Reserved and Nights stayed
 
 2.1
+Assigning a variable that contains the number of counts by unique room types in reserved room type and showing the counts.
 ```{r}
 library(dplyr)
 room_reservation_preference<-hotels%>% 
@@ -144,6 +145,7 @@ room_reservation_preference<-hotels%>%
 room_reservation_preference
 ```
 2.2
+Making a graph out of the value counts. From the graph, we can see that the room type A is the abusolute most reserved room type, with 85994 reservations. The type of room is not specified but I suppose room type A is the standard room.
 ```{r}
 library(ggplot2)
 room_type<- as_tibble(room_reservation_preference)
@@ -157,17 +159,22 @@ ggsave(room_reservation_plot,device="pdf")
 ```
 
 2.3
+Conducting two linear regressions
+First, we want to know whether families with children or babies stay more nights on week days
+Second, we want to know whtehr families with children or babies stay more nights on weekend days
 ```{r}
 lm.week_day_stays <- lm(hotels$stays_in_week_nights ~ hotels$children+hotels$babies)
 lm.weekend_day_stays <- lm(hotels$stays_in_weekend_nights ~ hotels$children+ hotels$babies)
 ```
-
+Outputting summaries for the two regressions
+We can see from the regression results that both children and babies are very significant in explaining the dependent variables that are weekday stays and weekend stays. However, both adjusted R-squared are very low. This suggests that whether having children or babies can not explain much of the variance in nights staying on weekdays or weekends.
 ```{r}
 summary(lm.week_day_stays )
 summary(lm.weekend_day_stays )
 ```
 
 2.4
+Saving the means of variables I used to a text file
 ```{r}
 means_hotel_stays <- hotels%>%
    select(reserved_room_type,stays_in_week_nights,stays_in_weekend_nights,children,babies)%>%
