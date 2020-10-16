@@ -22,11 +22,14 @@ library(rworldmap)
 install.packages("RColorBrewer", repos = "http://cran.us.r-project.org")
 library(RColorBrewer)
 ```
+
+
 # Part 1: Analysis Between adr and Booking Party Composition
 
 There are two comparisons done in this section. One is between adr and the full party composition with the colors showing the breakdown of the party by age group.
 
 The other is between adr and the number of kids. A linear regression analysis is shown at the end, and the resulting line.
+
 
 ## 1.1 Bringing in and modifying the dataset
 
@@ -64,6 +67,7 @@ hotels %>%
   geom_hline(aes(yintercept = 500), colour = "black")
 ```
 
+
 ## 1.2 Making a graph showing relation between number of people per booking and adr
 
 Below is a tile graph showing the relationship between the number of people per booking and adr. The colors on the graph show the number of kids per party. The white line is the result of a linear regression analysis shown in a later section. From the graph, there is a significant correlation between party size and adr with a further correlation between adr and the number of kids per party. This result lead to the next graph. A full image .png of the graph is available under the Figures folder in the repository.
@@ -86,6 +90,7 @@ Below is a tile graph showing the relationship between the number of people per 
   annotate(geom = "text", x = 0.52, y = 152, label = "paste(italic(R) ^ 2, \"= 0.191)\")", parse = TRUE, hjust = "left", colour = "black"))
 ```
 
+
 ## 1.3 Graph showing the relation between the number of kids per party and adr
 
 This graph is similar to the previous except the x axis variable is the number of kids per booking, and the colors are there to make it easier to distinguish the columns. Again, the white line is from a linear regression analysis shown below. A full size .png of the graph can be found in the Figures folder.
@@ -107,6 +112,7 @@ This graph is similar to the previous except the x axis variable is the number o
   annotate(geom = "text", x = 0.9, y = 215, label = "paste(italic(R) ^ 2, \" = 0.124)\")", parse = TRUE, hjust = "left", colour = "black"))
 ```
 
+
 ## 1.4 Linear regression analysis of the data
 
 The linear regression lines found on each of the graphs come from the analysis shown below. First is making the linear regression variable for each comparison and then showing the summary of the linear regression values. Both graphs show a very high significance between the variables used which comes from the low p-value. The R-squared value is low, though, showing that the correlation is not very strong.
@@ -124,6 +130,7 @@ summary(lm.party_size)
 summary(lm.nkids)
 ```
 
+
 ## 1.5 Creating a .txt file with the means
 
 Finally, I created a text file that contains all the means of the variables I used. The file can be found in the Data folder.
@@ -134,7 +141,9 @@ write.table(means_adr_by_party, file = "C:/Users/lamon/Desktop/CPSC441/Group_8/D
 
 
 
+
 # PART 2: Analysis of Room Reserved and Nights stayed
+
 
 ## 2.1
 Assigning a variable that contains the number of counts by unique room types in reserved room type and showing the counts.
@@ -144,6 +153,8 @@ room_reservation_preference<-hotels%>%
             count(reserved_room_type)
 room_reservation_preference
 ```
+
+
 ## 2.2
 Making a graph out of the value counts. From the graph, we can see that the room type A is the abusolute most reserved room type, with 85994 reservations. The type of room is not specified but I suppose room type A is the standard room.
 ```{r}
@@ -157,6 +168,7 @@ room_reservation_plot<-ggplot(room_type,mapping=aes(x=room_type$reserved_room_ty
 room_reservation_plot
 ggsave(room_reservation_plot,device="pdf")
 ```
+
 
 ## 2.3
 Conducting two linear regressions
@@ -172,6 +184,7 @@ We can see from the regression results that both children and babies are very si
 summary(lm.week_day_stays )
 summary(lm.weekend_day_stays )
 ```
+
 
 ## 2.4
 Saving the means of variables I used to a text file
