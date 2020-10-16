@@ -4,7 +4,6 @@ author: "Alex Armstrong, Si Chen, Ethan Lamons"
 date: "10/13/2020"
 output: html_document
 ---
-
 Loading all of the packages needed.
 ```{r}
 library(tidytuesdayR)
@@ -12,14 +11,11 @@ library(tidyverse)
 library(outliers)
 library(ggdark)
 ```
-
-
 # Part 1: Analysis Between adr and Booking Party Composition
 
-There are two comparisons done in this section. One is between adr and the full
-party composition with the colors showing the breakdown of the party by age group.
-The other is between adr and the number of kids. A linear regression analysis is 
-shown at the end, and the resulting line 
+There are two comparisons done in this section. One is between adr and the full party composition with the colors showing the breakdown of the party by age group.
+
+The other is between adr and the number of kids. A linear regression analysis is shown at the end, and the resulting line.
 
 ## 1.1 Bringing in and modifying the dataset
 
@@ -129,5 +125,49 @@ Finally, I created a text file that contains all the means of the variables I us
 means_adr_by_party <- as.data.frame(lapply(adr_by_party, mean), row.names = "mean")
 
 write.table(means_adr_by_party, file = "C:/Users/lamon/Desktop/CPSC441/Group_8/Data/adr_by_party_means.txt")
+```
+
+
+# Part 2
+
+2.1
+```{r}
+library(dplyr)
+room_reservation_preference<-hotels%>% 
+            count(reserved_room_type)
+room_reservation_preference
+```
+2.2
+```{r}
+library(ggplot2)
+room_type<- as_tibble(room_reservation_preference)
+room_reservation_plot<-ggplot(room_type,mapping=aes(x=room_type$reserved_room_type, y=room_type$n))+
+      geom_bar(stat = "identity")+
+      labs(x="Type of room",y="Number of reservation")+
+      ggtitle("Room Reservation by Type")
+      
+room_reservation_plot
+ggsave(room_reservation_plot,device="pdf")
+```
+
+2.3
+```{r}
+lm.week_day_stays <- lm(hotels$stays_in_week_nights ~ hotels$children+hotels$babies)
+lm.weekend_day_stays <- lm(hotels$stays_in_weekend_nights ~ hotels$children+ hotels$babies)
+```
+
+```{r}
+summary(lm.week_day_stays )
+summary(lm.weekend_day_stays )
+```
+
+2.4
+```{r}
+means_hotel_stays <- hotels%>%
+   select(reserved_room_type,stays_in_week_nights,stays_in_weekend_nights,children,babies)%>%
+   as.data.frame(lapply(mean), row.names = "mean")
+
+write.table(means_hotel_stays, file = "hotel_stays_means.txt")
+```
 ```
 

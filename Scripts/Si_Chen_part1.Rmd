@@ -4,7 +4,6 @@ author: "Si Chen"
 date: "10/8/2020"
 output: html_document
 ---
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -17,13 +16,14 @@ tuesdata <- tidytuesdayR::tt_load('2020-02-11')
 tuesdata <- tidytuesdayR::tt_load(2020, week = 7)
 hotels <- tuesdata$hotels
 ```
+2.1
 ```{r}
 library(dplyr)
 room_reservation_preference<-
   hotels%>% count(reserved_room_type)
 room_reservation_preference
 ```
-
+2.2
 ```{r}
 library(ggplot2)
 room_type<- as_tibble(room_reservation_preference)
@@ -33,5 +33,22 @@ plot1<-ggplot(room_type,mapping=aes(x=room_type$reserved_room_type, y=room_type$
       ggtitle("Room Reservation by Type")
 plot1
 ```
+2.3
+```{r}
+lm.week_day_stays <- lm(hotels$stays_in_week_nights ~ hotels$children+hotels$babies)
+lm.weekend_day_stays <- lm(hotels$stays_in_weekend_nights ~ hotels$children+ hotels$babies)
+```
 
+```{r}
+summary(lm.week_day_stays )
+summary(lm.weekend_day_stays )
+```
 
+2.4
+```{r}
+means_hotel_stays <- hotels%>%
+   select(reserved_room_type,stays_in_week_nights,stays_in_weekend_nights,children,babies)%>%
+   as.data.frame(lapply(mean), row.names = "mean")
+
+write.table(means_hotel_stays, file = "hotel_stays_means.txt")
+```
