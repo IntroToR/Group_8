@@ -11,7 +11,7 @@
 
 <meta name="author" content="Alex Armstrong, Si Chen, Ethan Lamons" />
 
-<meta name="date" content="2020-10-13" />
+<meta name="date" content="2020-10-16" />
 
 <title>Group 8: Hotel Bookings</title>
 
@@ -374,7 +374,7 @@ summary {
 
 <h1 class="title toc-ignore">Group 8: Hotel Bookings</h1>
 <h4 class="author">Alex Armstrong, Si Chen, Ethan Lamons</h4>
-<h4 class="date">10/13/2020</h4>
+<h4 class="date">10/16/2020</h4>
 
 </div>
 
@@ -389,27 +389,26 @@ summary {
 <pre><code>## package &#39;tidytuesdayR&#39; successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\lamon\AppData\Local\Temp\Rtmpeao6lO\downloaded_packages</code></pre>
+##  C:\Users\lamon\AppData\Local\Temp\RtmpuIvYGi\downloaded_packages</code></pre>
 <pre class="r"><code>library(tidytuesdayR)
 library(tidyverse)</code></pre>
-<pre><code>## -- Attaching packages --------------------------------------------------------------------------------------------------------------------- tidyverse 1.3.0 --</code></pre>
+<pre><code>## -- Attaching packages -------------------------------------------------------------------------------------------- tidyverse 1.3.0 --</code></pre>
 <pre><code>## v ggplot2 3.3.2     v purrr   0.3.4
 ## v tibble  3.0.3     v dplyr   1.0.2
 ## v tidyr   1.1.2     v stringr 1.4.0
 ## v readr   1.3.1     v forcats 0.5.0</code></pre>
-<pre><code>## -- Conflicts ------------------------------------------------------------------------------------------------------------------------ tidyverse_conflicts() --
+<pre><code>## -- Conflicts ----------------------------------------------------------------------------------------------- tidyverse_conflicts() --
 ## x dplyr::filter() masks stats::filter()
 ## x dplyr::lag()    masks stats::lag()</code></pre>
 <pre class="r"><code>library(outliers)
 library(ggdark)
-
 install.packages(&quot;rworldmap&quot;, repos = &quot;http://cran.us.r-project.org&quot;)</code></pre>
 <pre><code>## Installing package into &#39;C:/Users/lamon/Documents/R/win-library/4.0&#39;
 ## (as &#39;lib&#39; is unspecified)</code></pre>
 <pre><code>## package &#39;rworldmap&#39; successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\lamon\AppData\Local\Temp\Rtmpeao6lO\downloaded_packages</code></pre>
+##  C:\Users\lamon\AppData\Local\Temp\RtmpuIvYGi\downloaded_packages</code></pre>
 <pre class="r"><code>library(rworldmap)</code></pre>
 <pre><code>## Loading required package: sp</code></pre>
 <pre><code>## ### Welcome to rworldmap ###</code></pre>
@@ -420,7 +419,7 @@ install.packages(&quot;rworldmap&quot;, repos = &quot;http://cran.us.r-project.o
 <pre><code>## package &#39;RColorBrewer&#39; successfully unpacked and MD5 sums checked
 ## 
 ## The downloaded binary packages are in
-##  C:\Users\lamon\AppData\Local\Temp\Rtmpeao6lO\downloaded_packages</code></pre>
+##  C:\Users\lamon\AppData\Local\Temp\RtmpuIvYGi\downloaded_packages</code></pre>
 <pre class="r"><code>library(RColorBrewer)</code></pre>
 </div>
 <div id="part-1-analysis-between-adr-and-booking-party-composition" class="section level1">
@@ -562,7 +561,6 @@ install.packages(&quot;rworldmap&quot;, repos = &quot;http://cran.us.r-project.o
 <p>The linear regression lines found on each of the graphs come from the analysis shown below. First is making the linear regression variable for each comparison and then showing the summary of the linear regression values. Both graphs show a very high significance between the variables used which comes from the low p-value. The R-squared value is low, though, showing that the correlation is not very strong.</p>
 <pre class="r"><code>#Corresponding to the first graph
 lm.party_size &lt;- lm(adr_by_party$adr ~ adr_by_party$party_size)
-
 #Corresponding to the second graph
 lm.nkids &lt;- lm(adr_by_party$adr ~ adr_by_party$Number_of_Kids_per_Party)</code></pre>
 <pre class="r"><code>#Corresponding to the first graph
@@ -610,7 +608,6 @@ summary(lm.nkids)</code></pre>
 <h2>1.5 Creating a .txt file with the means</h2>
 <p>Finally, I created a text file that contains all the means of the variables I used. The file can be found in the Data folder.</p>
 <pre class="r"><code>means_adr_by_party &lt;- as.data.frame(lapply(adr_by_party, mean), row.names = &quot;mean&quot;)
-
 write.table(means_adr_by_party, file = &quot;C:/Users/lamon/Desktop/CPSC441/Group_8/Data/adr_by_party_means.txt&quot;)</code></pre>
 </div>
 </div>
@@ -716,7 +713,6 @@ lm.weekend_day_stays &lt;- lm(hotels$stays_in_weekend_nights ~ hotels$children+ 
 <pre class="r"><code>means_hotel_stays &lt;- hotels%&gt;%
    select(reserved_room_type,stays_in_week_nights,stays_in_weekend_nights,children,babies)%&gt;%
    na.omit(means_hotel_stays)
-
 means_hotel_stays &lt;- as.data.frame(lapply(means_hotel_stays, mean), row.names = &quot;mean&quot;)</code></pre>
 <pre><code>## Warning in mean.default(X[[i]], ...): argument is not numeric or logical:
 ## returning NA</code></pre>
@@ -752,12 +748,10 @@ means_hotel_stays &lt;- as.data.frame(lapply(means_hotel_stays, mean), row.names
 ## 7 codes from your data failed to match with a country code in the map
 ## 72 codes from the map weren&#39;t represented in your data</code></pre>
 <pre class="r"><code>par(mai=c(0,0,0.2,0), xaxs = &quot;i&quot;, yaxs = &quot;i&quot;)
-
 mapParams &lt;- mapCountryData(mapped_data, 
         nameColumnToPlot = &quot;mean_adr&quot;,
         mapTitle = &quot;Mean Average Daily Rate by Country&quot;,
         addLegend=F)
-
 do.call(addMapLegend,
         c(mapParams,
           legendLabels=&#39;limits&#39;,
@@ -772,7 +766,6 @@ I manually created the bounds for the legend. I also used a different colour sch
   summarise(mean_leadtime=mean(lead_time))</code></pre>
 <pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
 <pre class="r"><code>colourPalette2 &lt;- brewer.pal(n=7,name=&#39;RdPu&#39;)
-
 mapped_data2 &lt;- joinCountryData2Map(by_country2, 
         joinCode = &quot;ISO3&quot;, 
         nameJoinColumn = &quot;country&quot;)</code></pre>
@@ -780,13 +773,11 @@ mapped_data2 &lt;- joinCountryData2Map(by_country2,
 ## 7 codes from your data failed to match with a country code in the map
 ## 72 codes from the map weren&#39;t represented in your data</code></pre>
 <pre class="r"><code>par(mai=c(0,0,0.2,0), xaxs = &quot;i&quot;, yaxs = &quot;i&quot;)
-
 mapParams2 &lt;- mapCountryData(mapped_data2, 
         nameColumnToPlot = &quot;mean_leadtime&quot;,
         mapTitle = &quot;Lead Time by Country&quot;,
         colourPalette = colourPalette2,
         addLegend = F)
-
 mapParams2$legendText &lt;-
   c(&#39;0 - 22.72&#39;,
     &#39;22.72-42.89&#39;,
@@ -795,7 +786,6 @@ mapParams2$legendText &lt;-
     &#39;77.21- 94.85&#39;,
     &#39;94.85-123.96&#39;,
     &#39;123.96+&#39;)
-
 do.call(addMapLegendBoxes,
         c(mapParams2,
           title=&#39;Lead Times (Days)&#39;))</code></pre>
@@ -824,7 +814,6 @@ do.call(addMapLegendBoxes,
   select(distribution_channel, lead_time) %&gt;%
   mutate(distribution_channel = factor(distribution_channel,
                                        levels = c(&quot;Direct&quot;, &quot;Corporate&quot;, &quot;TA/TO&quot;)))
-
 # Compute the analysis of variance
 res.aov &lt;- aov(distribution_channel_analysis$lead_time ~ distribution_channel_analysis$distribution_channel)
 # Summary of the analysis
